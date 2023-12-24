@@ -2,16 +2,16 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit"
 import {Point} from "react-native-google-places-autocomplete";
 
 interface StateType {
-    origin: Origin,
-    destination: null | string,
+    origin: PAYLOAD,
+    destination: PAYLOAD,
     travelTimeInformation: null | string,
 }
 
-type Origin = { location: Point | undefined, description: string }
+type PAYLOAD = { location: Point | undefined, description: string }
 
 const initialState: StateType = {
     origin: {location: undefined, description: ''},
-    destination: null,
+    destination: {location: undefined, description: ''},
     travelTimeInformation: null
 }
 
@@ -19,10 +19,10 @@ export const navSlice = createSlice({
     name: "nav",
     initialState,
     reducers: {
-        setOrigin: (state, action: PayloadAction<Origin>) => {
+        setOrigin: (state, action: PayloadAction<PAYLOAD>) => {
             state.origin = action.payload
         },
-        setDestination: (state, action: PayloadAction<string>) => {
+        setDestination: (state, action: PayloadAction<PAYLOAD>) => {
             state.destination = action.payload
         },
         setTravelTimeInformation: (state, action: PayloadAction<string>) => {
