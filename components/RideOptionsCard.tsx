@@ -3,6 +3,8 @@ import tw from "tailwind-react-native-classnames";
 import {useNavigation} from "@react-navigation/native";
 import {Icon} from "react-native-elements";
 import {useState} from "react";
+import {useSelector} from "react-redux";
+import {selectTravelTimeInformation} from "../slices/navSlice";
 
 type Ride = { id: string, title: string, multiplier: number, image: any }
 
@@ -27,9 +29,12 @@ const rideOptionsData: Ride[] = [
     },
 ]
 
+const SURGE_CHARGE_RATE = 1.5
+
 const RideOptionsCard = () => {
     const navigation = useNavigation()
     const [selected, setSelected] = useState<Ride>()
+    const travelTimeInfo = useSelector(selectTravelTimeInformation)
 
 
     return (
@@ -42,7 +47,7 @@ const RideOptionsCard = () => {
                                   style={tw`absolute top-3 left-5 z-50 p-3 rounded-full`}>
                     <Icon name="chevron-left" type="fontawesome"/>
                 </TouchableOpacity>
-                <Text style={tw`text-center py-5 text-xl`}>Select a Ride</Text>
+                <Text style={tw`text-center py-5 text-xl`}>Select a Ride - {travelTimeInfo?.distance.text}</Text>
             </View>
 
             <FlatList data={rideOptionsData} keyExtractor={(item) => item.id} renderItem={({item}) => (
@@ -53,15 +58,20 @@ const RideOptionsCard = () => {
                     }} source={item.image}/>
                     <View style={tw`-ml-6`}>
                         <Text style={tw`text-xl font-semibold`}>{item.title}</Text>
-                        <Text>time to travel...</Text>
+                        <Text>{travelTimeInfo?.duration.text} time to travel</Text>
                     </View>
-                    <Text style={tw`text-xl`}>$99</Text>
+                    <Text style={tw`text-base font-bold`}>{
+                        new Intl.NumberFormat("en-gb", {
+                            style: 'currency',
+                            currency: 'GBP'
+                        }).format(travelTimeInfo?.duration.value * SURGE_CHARGE_RATE * item.multiplier / 100)
+                    }</Text>
                 </TouchableOpacity>
             )}/>
 
             <View>
                 <TouchableOpacity disabled={!selected} style={tw`bg-black py-3 m-3 ${!selected ? "bg-gray-300" : ''}`}>
-                    <Text style={tw`text-center text-white text-xl`}>Choose {selected?.title}</Text>
+                    <Text style={tw`text-center text-white text-lg`}>Choose {selected?.title}</Text>
                 </TouchableOpacity>
             </View>
 
